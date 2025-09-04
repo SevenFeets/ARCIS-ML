@@ -1,0 +1,69 @@
+# Dockerfile for ARCIS Detection Service on Jetson Nano
+FROM nvcr.io/nvidia/l4t-pytorch:r35.2.1-pth2.0-py3
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    python3-dev \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    libgstreamer1.0-0 \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-libav \
+    gstreamer1.0-doc \
+    gstreamer1.0-tools \
+    gstreamer1.0-x \
+    gstreamer1.0-alsa \
+    gstreamer1.0-gl \
+    gstreamer1.0-gtk3 \
+    gstreamer1.0-qt5 \
+    gstreamer1.0-pulseaudio \
+    libopencv-dev \
+    python3-opencv \
+    alsa-utils \
+    pulseaudio \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements_jetson.txt .
+RUN pip3 install --no-cache-dir -r requirements_jetson.txt
+
+# Install additional Jetson-specific packages
+RUN pip3 install --no-cache-dir \
+    redis \
+    google-cloud-vision \
+    requests \
+    pygame \
+    pynmea2 \
+    mgrs
+
+# Copy application files
+COPY train_weapon_detection.py .
+COPY train_weapon_detection_redis.py .
+COPY arcis_redis_integration.py .
+COPY ARCIS_Dataset_80_10_10/ ./ARCIS_Dataset_80_10_10/
+COPY models/ ./models/
+COPY danger_alert.mp3 ./danger_alert.mp3
+
+# Create directories for logs and captures
+RUN mkdir -p mission_logs captures
+
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV REDIS_HOST=redis
+ENV REDIS_PORT=6379
+
+# Expose any necessary ports (if needed)
+EXPOSE 8000
+
+# Default command
+CMD ["python3", "train_weapon_detection_redis.py"] 

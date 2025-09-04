@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  # Redis Cache and Message Broker
+  redis:
+    image: redis:7-alpine
+    container_name: arcis_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    restart: unless-stopped
+    networks:
+      - arcis_network
+
+  # Main ARCIS Object Detection Service
+  arcis_detection:
+    build:
+      context: .
+      dockerfile: Dockerfile.jetson
+    container_name: arcis_detection
+    privileged: true
+    volumes:
+      - /dev:/dev
+      - ./models:/app/models
+      - ./mission_logs:/app/mission_logs
+      - ./captures:/app/captures
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - GOOGLE_CLOUD_PROJECT=${GOOGLE_CLOUD_PROJECT}
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/gcp-key.json
+    depends_on:
+      - redis
+    networks:
+      - arcis_network
+    restart: unless-stopped
+
+  # Cloud Integration Service
+  arcis_cloud:
+    build:
+      context: .
+      dockerfile: Dockerfile.cloud
+    container_name: arcis_cloud
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - GOOGLE_CLOUD_PROJECT=${GOOGLE_CLOUD_PROJECT}
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/gcp-key.json
+      - DATABASE_URL=${DATABASE_URL}
+      - WEBSITE_API_URL=${WEBSITE_API_URL}
+      - WEBSITE_API_KEY=${WEBSITE_API_KEY}
+    volumes:
+      - ./credentials:/app/credentials:ro
+      - ./mission_logs:/app/mission_logs
+    depends_on:
+      - redis
+    networks:
+      - arcis_network
+    restart: unless-stopped
+
+  # Web API Service for Raspberry Pi Communication
+  arcis_api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: arcis_api
+    ports:
+      - "8080:8080"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - redis
+    networks:
+      - arcis_network
+    restart: unless-stopped
+
+  # Redis Commander (Optional - for debugging)
+  redis_commander:
+    image: rediscommander/redis-commander:latest
+    container_name: redis_commander
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    networks:
+      - arcis_network
+    profiles:
+      - debug
+
+volumes:
+  redis_data:
+
+networks:
+  arcis_network:
+    driver: bridge 

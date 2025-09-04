@@ -1,0 +1,4 @@
+Knife
+Pistol
+weapon
+rifle

@@ -1,0 +1,57 @@
+## Python
+arcis_venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+
+## Machine Learning Models
+*.pt
+*.h5
+*.tflite
+*.onnx
+*.pkl
+*.joblib
+*.pth
+
+## Data and Cache Files
+*.npy
+*.npz
+*.cache
+*.tmp
+*.temp
+
+## TensorFlow Lite Calibration Files (very large)
+tmp_tflite_int8_calibration_images.npy
+calibration_image_sample_data_*.npy
+
+## Training Outputs
+runs/
+logs/
+*.log
+
+## Datasets (large binary files)
+merged_dataset/
+merged_dataset_75_15/
+merged_dataset_80_10_10_FULL/
+merged_ssd_dataset/
+newDataset/
+newDatasets/
+weapon_detection_SSD/
+
+## Environment and Configuration
+.env
+.env.local
+.env.*.local
+
+## IDE and System Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+## Jupyter Notebook
+.ipynb_checkpoints/
