@@ -64,5 +64,8 @@ Thumbs.db
 *.swp
 *.swo
 
+!yolo11n.pt
+!yolov8n.pt
+
 ## Jupyter Notebook
 .ipynb_checkpoints/
