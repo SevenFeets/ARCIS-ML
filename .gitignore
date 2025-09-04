@@ -22,14 +22,25 @@ __pycache__/
 *.tmp
 *.temp
 
-## TensorFlow Lite Calibration Files (very large)
-tmp_tflite_int8_calibration_images.npy
-calibration_image_sample_data_*.npy
-
-## Training Outputs
+## Training Outputs (exclude from root, but allow in multi_edge_deployment)
 runs/
 logs/
 *.log
+
+## Allow multi_edge_deployment runs directory
+!multi_edge_deployment/**/runs/
+
+## Allow model files in multi_edge_deployment
+!multi_edge_deployment/**/*.pt
+!multi_edge_deployment/**/*.onnx
+!multi_edge_deployment/**/*.h5
+!multi_edge_deployment/**/*.tflite
+
+## Allow calibration files in multi_edge_deployment (except the huge one)
+!multi_edge_deployment/**/calibration_image_sample_data_*.npy
+
+## Exclude only the very large calibration file from multi_edge_deployment
+multi_edge_deployment/**/tmp_tflite_int8_calibration_images.npy
 
 ## Datasets (large binary files)
 merged_dataset/
