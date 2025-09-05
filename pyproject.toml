@@ -1,0 +1,194 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arcis"
+version = "1.0.0"
+description = "Advanced Real-time Computer Intelligence System for Weapon Detection"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "ARCIS Team", email = "team@arcis.ai"},
+]
+maintainers = [
+    {name = "ARCIS Team", email = "team@arcis.ai"},
+]
+keywords = [
+    "computer-vision",
+    "object-detection",
+    "yolo",
+    "weapon-detection",
+    "edge-computing",
+    "machine-learning",
+    "deep-learning",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "ultralytics>=8.0.0",
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+    "opencv-python>=4.8.0",
+    "numpy>=1.24.0",
+    "Pillow>=9.5.0",
+    "pandas>=2.0.0",
+    "scikit-learn>=1.3.0",
+    "matplotlib>=3.7.0",
+    "seaborn>=0.12.0",
+    "onnx>=1.14.0",
+    "onnxruntime>=1.15.0",
+    "tensorflow>=2.13.0",
+    "tensorflow-lite>=2.13.0",
+    "flask>=2.3.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.23.0",
+    "redis>=4.6.0",
+    "docker>=6.1.0",
+    "tqdm>=4.65.0",
+    "pyyaml>=6.0",
+    "requests>=2.31.0",
+    "psutil>=5.9.0",
+    "GPUtil>=1.4.0",
+    "pygame>=2.5.0",
+    "pydub>=0.25.0",
+    "pyserial>=3.5",
+    "RPi.GPIO>=0.7.1",
+    "adafruit-circuitpython-gps>=3.10.0",
+    "boto3>=1.28.0",
+    "google-cloud-storage>=2.10.0",
+    "azure-storage-blob>=12.17.0",
+    "wandb>=0.15.0",
+    "tensorboard>=2.13.0",
+    "loguru>=0.7.0",
+    "albumentations>=1.3.0",
+    "imgaug>=0.4.0",
+    "tf2onnx>=1.15.0",
+    "onnx-tf>=1.15.0",
+    "numba>=0.57.0",
+    "cython>=3.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.7.0",
+    "flake8>=6.0.0",
+    "mypy>=1.5.0",
+    "jupyter>=1.0.0",
+    "ipykernel>=6.25.0",
+]
+docs = [
+    "sphinx>=7.1.0",
+    "sphinx-rtd-theme>=1.3.0",
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.2.0",
+]
+gpu = [
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+]
+edge = [
+    "tensorflow-lite>=2.13.0",
+    "onnxruntime>=1.15.0",
+]
+
+[project.scripts]
+arcis-train = "arcis.scripts.train:main"
+arcis-inference = "arcis.scripts.inference:main"
+arcis-evaluate = "arcis.scripts.evaluate:main"
+arcis-deploy = "arcis.scripts.deploy:main"
+
+[project.urls]
+Homepage = "https://github.com/yourusername/arcis"
+Documentation = "https://arcis.readthedocs.io"
+Repository = "https://github.com/yourusername/arcis.git"
+Issues = "https://github.com/yourusername/arcis/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+arcis = [
+    "configs/*.yaml",
+    "configs/*.yml",
+    "models/*.pt",
+    "models/*.onnx",
+    "models/*.tflite",
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--verbose",
+    "--tb=short",
+    "--cov=src/arcis",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-report=xml",
+]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = [
+    "ultralytics.*",
+    "cv2.*",
+    "tensorflow.*",
+    "torch.*",
+    "onnx.*",
+    "onnxruntime.*",
+]
+ignore_missing_imports = true
